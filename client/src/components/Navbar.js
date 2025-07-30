@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <nav style={styles.navbar}>
-      <h2 style={styles.logo}>MyApp</h2>
+      <h2 style={styles.logo}>RouteCrafter</h2>
       <div style={styles.links}>
         {!token ? (
           <>
