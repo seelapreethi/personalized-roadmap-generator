@@ -1,11 +1,12 @@
-// src/pages/LoginPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // ✅ for redirection
 import InputField from '../components/InputField';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate(); // ✅ initialize navigate
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,8 +30,10 @@ const LoginPage = () => {
         localStorage.setItem('token', token);
         setMessage('✅ Login successful');
 
-        // Optional: Redirect to dashboard
-        // window.location.href = '/dashboard';
+        // ✅ redirect after delay (optional for UX)
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1000);
       } else {
         setMessage('❌ Login failed: Token not received');
       }
