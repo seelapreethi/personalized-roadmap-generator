@@ -8,7 +8,7 @@ const protect = require('../middleware/authMiddleware');
 router.get('/', protect, (req, res) => {
   res.json({
     message: 'You have access to this protected route!',
-    user: req.user, // decoded user info from JWT
+    user: req.user,
   });
 });
 

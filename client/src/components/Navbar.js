@@ -1,12 +1,20 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
-  const token = localStorage.getItem('token');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check token whenever route changes
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    setIsLoggedIn(false);
     navigate('/login');
   };
 
@@ -14,7 +22,7 @@ const Navbar = () => {
     <nav style={styles.navbar}>
       <h2 style={styles.logo}>RouteCrafter</h2>
       <div style={styles.links}>
-        {!token ? (
+        {!isLoggedIn ? (
           <>
             <Link to="/login" style={styles.link}>Login</Link>
             <Link to="/register" style={styles.link}>Register</Link>
@@ -50,6 +58,7 @@ const styles = {
   link: {
     color: '#fff',
     textDecoration: 'none',
+    fontWeight: 'bold',
   },
   logoutButton: {
     backgroundColor: '#ff4d4f',
@@ -58,6 +67,7 @@ const styles = {
     color: '#fff',
     cursor: 'pointer',
     borderRadius: '5px',
+    fontWeight: 'bold',
   },
 };
 
