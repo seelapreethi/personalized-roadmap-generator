@@ -12,6 +12,8 @@ app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/protected', require('./routes/protected'));
+const learningFormRoutes = require('./routes/learningFormRoutes');
+app.use('/api/learning-form', learningFormRoutes);
 
 
 const PORT = process.env.PORT || 5000;
