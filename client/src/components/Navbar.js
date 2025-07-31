@@ -30,6 +30,7 @@ const Navbar = () => {
         ) : (
           <>
             <Link to="/dashboard" style={styles.link}>Dashboard</Link>
+            <Link to="/learning-form" style={styles.link}>Learning Form</Link>
             <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
           </>
         )}
