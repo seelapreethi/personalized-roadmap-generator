@@ -5,6 +5,8 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import LearningFormPage from './pages/LearningFormPage';
 import FormPage from './pages/FormPage';
+import ViewRoadmapPage from './pages/ViewRoadmapPage';
+
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
 <Route path="/learning-form" element={<LearningFormPage />} />
 <Route path="/form" element={<FormPage />} />
+<Route path="/view-roadmap" element={<ViewRoadmapPage />} />
+
 
 
 
