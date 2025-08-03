@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const RoadmapPage = () => {
   const [roadmap, setRoadmap] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const roadmapRef = useRef(null); // reference to roadmap content
 
   useEffect(() => {
     const fetchRoadmap = async () => {
@@ -31,7 +34,6 @@ const RoadmapPage = () => {
             },
           }
         );
-
         setRoadmap(res.data.roadmap);
       } catch (err) {
         console.error('Error fetching roadmap:', err);
@@ -44,28 +46,60 @@ const RoadmapPage = () => {
     fetchRoadmap();
   }, []);
 
+  const handleDownloadPDF = async () => {
+    const input = roadmapRef.current;
+    if (!input) return;
+
+    const canvas = await html2canvas(input);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let y = 10;
+    if (imgHeight > pageHeight) {
+      // Split into pages if content too long
+      pdf.addImage(imgData, 'PNG', 0, y, imgWidth, imgHeight);
+    } else {
+      pdf.addImage(imgData, 'PNG', 0, y, imgWidth, imgHeight);
+    }
+
+    pdf.save('My_Roadmap.pdf');
+  };
+
   return (
     <>
       <Navbar />
       <div style={styles.container}>
-        <h2 style={styles.heading}>Your Personalized Learning Roadmap</h2>
+        <h2>Your Personalized Learning Roadmap</h2>
 
         {loading ? (
-          <p style={styles.message}>Loading roadmap...</p>
+          <p>Loading roadmap...</p>
         ) : error ? (
-          <p style={{ ...styles.message, color: 'red' }}>{error}</p>
+          <p style={{ color: 'red' }}>{error}</p>
         ) : roadmap.length === 0 ? (
-          <p style={styles.message}>No roadmap available.</p>
+          <p>No roadmap available.</p>
         ) : (
-          <ul style={styles.list}>
-            {roadmap.map((item) => (
-              <li key={item.week} style={styles.listItem}>
-                <strong>Week {item.week}:</strong> {item.topic}
-                <br />
-                <span style={styles.hours}>Estimated Hours: {item.estimatedHours}</span>
-              </li>
-            ))}
-          </ul>
+          <>
+            <div ref={roadmapRef}>
+              <ul style={styles.list}>
+                {roadmap.map((item) => (
+                  <li key={item.week} style={styles.listItem}>
+                    <strong>Week {item.week}:</strong> {item.topic}<br />
+                    <em>Estimated Hours:</em> {item.estimatedHours || 'N/A'}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <button onClick={handleDownloadPDF} style={styles.downloadBtn}>
+              📄 Download as PDF
+            </button>
+          </>
         )}
       </div>
     </>
@@ -77,17 +111,6 @@ const styles = {
     padding: '2rem',
     textAlign: 'center',
     fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f9f9f9',
-    minHeight: '100vh',
-  },
-  heading: {
-    fontSize: '2rem',
-    color: '#333',
-    marginBottom: '1.5rem',
-  },
-  message: {
-    fontSize: '1rem',
-    color: '#666',
   },
   list: {
     listStyleType: 'none',
@@ -95,17 +118,21 @@ const styles = {
     marginTop: '1rem',
   },
   listItem: {
-    padding: '1rem',
-    margin: '0.5rem auto',
-    backgroundColor: '#fff',
+    padding: '0.7rem',
+    marginBottom: '1rem',
+    border: '1px solid #ccc',
     borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    maxWidth: '600px',
-    textAlign: 'left',
+    backgroundColor: '#f9f9f9',
   },
-  hours: {
-    fontSize: '0.9rem',
-    color: '#555',
+  downloadBtn: {
+    marginTop: '1rem',
+    padding: '10px 20px',
+    fontSize: '16px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
   },
 };
 
