@@ -7,24 +7,21 @@ const generateRoadmap = async (req, res) => {
 
   try {
     const topicList = topics.split(',').map(t => t.trim());
-    let roadmap = [];
+    const roadmap = [];
+
     let week = 1;
 
-    topicList.forEach((topic) => {
-      if (skillLevel === 'beginner') {
-        roadmap.push({ week: week++, topic: `Basics of ${topic}` });
-        roadmap.push({ week: week++, topic: `Practice exercises for ${topic}` });
-      } else if (skillLevel === 'intermediate') {
-        roadmap.push({ week: week++, topic: `Deep Dive into ${topic}` });
-        roadmap.push({ week: week++, topic: `Build mini project with ${topic}` });
-      } else if (skillLevel === 'advanced') {
-        roadmap.push({ week: week++, topic: `Advanced ${topic} concepts` });
-        roadmap.push({ week: week++, topic: `Performance + Best Practices in ${topic}` });
-      }
+    // Step 1: Add 2 weeks per topic (Learning + Practice)
+    topicList.forEach(topic => {
+      roadmap.push({ week: week++, topic: `Basics of ${topic}` });
+      roadmap.push({ week: week++, topic: `Practice exercises for ${topic}` });
     });
 
-    roadmap.push({ week: week++, topic: "Capstone Project based on all topics" });
-    roadmap.push({ week: week++, topic: "Revision + Interview Prep" });
+    // Step 2: Add capstone project
+    roadmap.push({ week: week++, topic: `Capstone Project based on all topics` });
+
+    // Step 3: Add revision
+    roadmap.push({ week: week++, topic: `Revision + Interview Prep` });
 
     res.status(200).json({ roadmap });
   } catch (error) {
@@ -32,5 +29,6 @@ const generateRoadmap = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 module.exports = { generateRoadmap };
