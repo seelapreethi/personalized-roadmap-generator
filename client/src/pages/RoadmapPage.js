@@ -47,29 +47,60 @@ const RoadmapPage = () => {
   }, []);
 
   const handleDownloadPDF = async () => {
-    const input = roadmapRef.current;
-    if (!input) return;
+  const input = roadmapRef.current;
+  if (!input || roadmap.length === 0) return;
 
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
+  const pdf = new jsPDF();
+  const pageHeight = pdf.internal.pageSize.height;
+  const marginTop = 20;
+  let y = marginTop;
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+  // Title
+  pdf.setFontSize(20);
+  pdf.setTextColor(40, 40, 40);
+  pdf.text('📘 Personalized Learning Roadmap', 105, y, { align: 'center' });
+  y += 10;
 
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  // Date of download
+  const today = new Date().toLocaleDateString();
+  pdf.setFontSize(11);
+  pdf.setTextColor(100);
+  pdf.text(`Downloaded on: ${today}`, 105, y, { align: 'center' });
+  y += 10;
 
-    let y = 10;
-    if (imgHeight > pageHeight) {
-      // Split into pages if content too long
-      pdf.addImage(imgData, 'PNG', 0, y, imgWidth, imgHeight);
-    } else {
-      pdf.addImage(imgData, 'PNG', 0, y, imgWidth, imgHeight);
+  // Line separator
+  pdf.setDrawColor(200);
+  pdf.line(20, y, 190, y);
+  y += 10;
+
+  // Loop through roadmap
+  pdf.setFontSize(13);
+  pdf.setTextColor(50);
+
+  roadmap.forEach((item, index) => {
+    const weekText = `Week ${item.week}: ${item.topic}`;
+    const hoursText = `Estimated Hours: ${item.estimatedHours || 'N/A'}`;
+
+    // Check if enough space on page
+    if (y + 20 > pageHeight - 20) {
+      pdf.addPage();
+      y = marginTop;
     }
 
-    pdf.save('My_Roadmap.pdf');
-  };
+    pdf.text(weekText, 20, y);
+    y += 7;
+    pdf.setFontSize(11);
+    pdf.setTextColor(80);
+    pdf.text(hoursText, 25, y);
+    pdf.setFontSize(13);
+    pdf.setTextColor(50);
+    y += 12;
+  });
+
+  // Save
+  pdf.save('Personalized_Learning_Roadmap.pdf');
+};
+
 
   return (
     <>
@@ -125,15 +156,19 @@ const styles = {
     backgroundColor: '#f9f9f9',
   },
   downloadBtn: {
-    marginTop: '1rem',
-    padding: '10px 20px',
-    fontSize: '16px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
+  marginTop: '1rem',
+  padding: '12px 24px',
+  fontSize: '16px',
+  fontWeight: 'bold',
+  backgroundColor: '#007bff',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+  transition: 'background-color 0.3s ease',
+},
+
 };
 
 export default RoadmapPage;
