@@ -48,19 +48,21 @@ const RoadmapPage = () => {
     <>
       <Navbar />
       <div style={styles.container}>
-        <h2>Your Personalized Learning Roadmap</h2>
+        <h2 style={styles.heading}>Your Personalized Learning Roadmap</h2>
 
         {loading ? (
-          <p>Loading roadmap...</p>
+          <p style={styles.message}>Loading roadmap...</p>
         ) : error ? (
-          <p style={{ color: 'red' }}>{error}</p>
+          <p style={{ ...styles.message, color: 'red' }}>{error}</p>
         ) : roadmap.length === 0 ? (
-          <p>No roadmap available.</p>
+          <p style={styles.message}>No roadmap available.</p>
         ) : (
           <ul style={styles.list}>
             {roadmap.map((item) => (
               <li key={item.week} style={styles.listItem}>
                 <strong>Week {item.week}:</strong> {item.topic}
+                <br />
+                <span style={styles.hours}>Estimated Hours: {item.estimatedHours}</span>
               </li>
             ))}
           </ul>
@@ -75,6 +77,17 @@ const styles = {
     padding: '2rem',
     textAlign: 'center',
     fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f9f9f9',
+    minHeight: '100vh',
+  },
+  heading: {
+    fontSize: '2rem',
+    color: '#333',
+    marginBottom: '1.5rem',
+  },
+  message: {
+    fontSize: '1rem',
+    color: '#666',
   },
   list: {
     listStyleType: 'none',
@@ -82,8 +95,17 @@ const styles = {
     marginTop: '1rem',
   },
   listItem: {
-    padding: '0.5rem 0',
-    borderBottom: '1px solid #ccc',
+    padding: '1rem',
+    margin: '0.5rem auto',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    maxWidth: '600px',
+    textAlign: 'left',
+  },
+  hours: {
+    fontSize: '0.9rem',
+    color: '#555',
   },
 };
 
