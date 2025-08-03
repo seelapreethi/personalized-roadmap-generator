@@ -1,34 +1,49 @@
-const generateRoadmap = async (req, res) => {
-  const { goal, skillLevel, weeklyTime, topics } = req.body;
+// controllers/roadmapController.js
 
-  if (!goal || !skillLevel || !weeklyTime || !topics) {
-    return res.status(400).json({ error: 'All fields required' });
-  }
-
+exports.generateRoadmap = async (req, res) => {
   try {
-    const topicList = topics.split(',').map(t => t.trim());
-    const roadmap = [];
+    const { goal, skillLevel, weeklyTime, topics } = req.body;
 
+    // Validate input
+    if (!goal || !skillLevel || !weeklyTime || !topics) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const topicList = topics.split(',').map((t) => t.trim());
+    const roadmap = [];
     let week = 1;
 
-    // Step 1: Add 2 weeks per topic (Learning + Practice)
-    topicList.forEach(topic => {
-      roadmap.push({ week: week++, topic: `Basics of ${topic}` });
-      roadmap.push({ week: week++, topic: `Practice exercises for ${topic}` });
+    for (const topic of topicList) {
+      roadmap.push({
+        week: week++,
+        topic: `Basics of ${topic}`,
+        estimatedHours: parseInt(weeklyTime),
+      });
+
+      roadmap.push({
+        week: week++,
+        topic: `Practice exercises for ${topic}`,
+        estimatedHours: parseInt(weeklyTime),
+      });
+    }
+
+    // Add final weeks
+    roadmap.push({
+      week: week++,
+      topic: 'Capstone Project based on all topics',
+      estimatedHours: parseInt(weeklyTime),
     });
 
-    // Step 2: Add capstone project
-    roadmap.push({ week: week++, topic: `Capstone Project based on all topics` });
+    roadmap.push({
+      week: week++,
+      topic: 'Revision + Interview Prep',
+      estimatedHours: parseInt(weeklyTime),
+    });
 
-    // Step 3: Add revision
-    roadmap.push({ week: week++, topic: `Revision + Interview Prep` });
+    res.json({ roadmap });
 
-    res.status(200).json({ roadmap });
   } catch (error) {
-    console.error('Roadmap generation error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error generating roadmap:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
-
-
-module.exports = { generateRoadmap };
