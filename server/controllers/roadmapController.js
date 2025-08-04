@@ -47,3 +47,28 @@ exports.generateRoadmap = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+const Roadmap = require('../models/roadmapModel'); // Add this at the top if not already
+
+
+exports.saveRoadmap = async (req, res) => {
+  try {
+    const { roadmap } = req.body;
+
+    if (!roadmap || roadmap.length === 0) {
+      return res.status(400).json({ error: 'Roadmap data is missing.' });
+    }
+
+    const newRoadmap = new Roadmap({
+      user: req.user._id,
+      roadmap,
+    });
+
+    await newRoadmap.save();
+
+    res.status(201).json({ message: '✅ Roadmap saved successfully!' });
+  } catch (error) {
+    console.error('Error saving roadmap:', error);
+    res.status(500).json({ error: 'Server error while saving roadmap.' });
+  }
+};
