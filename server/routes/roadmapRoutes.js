@@ -1,11 +1,10 @@
 const express = require('express');
-const { generateRoadmap } = require('../controllers/roadmapController');
-
 const router = express.Router();
 
-// Protected route
-const protect = require('../middleware/authMiddleware'); 
+const { generateRoadmap, saveRoadmap } = require('../controllers/roadmapController');
+const protect = require('../middleware/authMiddleware'); // ✅ Correct way
 
 router.post('/', protect, generateRoadmap);
+router.post('/save', protect, saveRoadmap);
 
 module.exports = router;
