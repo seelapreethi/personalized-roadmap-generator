@@ -58,7 +58,7 @@ const RoadmapPage = () => {
   // Title
   pdf.setFontSize(20);
   pdf.setTextColor(40, 40, 40);
-  pdf.text('📘 Personalized Learning Roadmap', 105, y, { align: 'center' });
+  pdf.text('Personalized Learning Roadmap', 105, y, { align: 'center' });
   y += 10;
 
   // Date of download
@@ -100,6 +100,25 @@ const RoadmapPage = () => {
   // Save
   pdf.save('Personalized_Learning_Roadmap.pdf');
 };
+const handleSaveRoadmap = async () => {
+  const token = localStorage.getItem('token');
+
+  try {
+    await axios.post(
+      `${process.env.REACT_APP_API_BASE_URL}/roadmap/save`,
+      { roadmap },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    alert('✅ Roadmap saved to your account!');
+  } catch (err) {
+    console.error('Error saving roadmap:', err);
+    alert('❌ Failed to save roadmap.');
+  }
+};
 
 
   return (
@@ -130,6 +149,9 @@ const RoadmapPage = () => {
             <button onClick={handleDownloadPDF} style={styles.downloadBtn}>
               📄 Download as PDF
             </button>
+            <button onClick={handleSaveRoadmap} style={styles.saveBtn}>
+  💾 Save Roadmap to Profile
+</button>
           </>
         )}
       </div>
@@ -168,6 +190,21 @@ const styles = {
   boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
   transition: 'background-color 0.3s ease',
 },
+saveBtn: {
+  marginTop: '1rem',
+  marginLeft: '1rem',
+  padding: '12px 24px',
+  fontSize: '16px',
+  fontWeight: 'bold',
+  backgroundColor: '#28a745',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+  transition: 'background-color 0.3s ease',
+},
+
 
 };
 
