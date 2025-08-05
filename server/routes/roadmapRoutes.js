@@ -1,13 +1,25 @@
 const express = require('express');
 const router = express.Router();
 
-const { generateRoadmap, saveRoadmap } = require('../controllers/roadmapController');
+const {
+  generateRoadmap,
+  saveRoadmap,
+  getUserRoadmaps,
+  deleteRoadmap,
+} = require('../controllers/roadmapController');
+
 const protect = require('../middleware/authMiddleware');
 
-// POST /api/roadmap - generate roadmap
+// Generate roadmap
 router.post('/', protect, generateRoadmap);
 
-// POST /api/roadmap/save - save roadmap
+// Save roadmap
 router.post('/save', protect, saveRoadmap);
+
+// Get user's saved roadmaps
+router.get('/my', protect, getUserRoadmaps);
+
+// Delete roadmap
+router.delete('/:id', protect, deleteRoadmap);
 
 module.exports = router;
