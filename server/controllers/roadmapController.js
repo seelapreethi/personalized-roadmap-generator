@@ -7,7 +7,6 @@ const generateRoadmap = async (req, res) => {
   try {
     const { goal, skillLevel, weeklyTime, topics } = req.body;
 
-    // Validate input
     if (!goal || !skillLevel || !weeklyTime || !topics) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -30,7 +29,6 @@ const generateRoadmap = async (req, res) => {
       });
     }
 
-    // Final 2 weeks
     roadmap.push({
       week: week++,
       topic: 'Capstone Project based on all topics',
@@ -75,7 +73,43 @@ const saveRoadmap = async (req, res) => {
   }
 };
 
+// @desc    Get saved roadmaps for user
+// @route   GET /api/roadmap/my
+// @access  Private
+const getUserRoadmaps = async (req, res) => {
+  try {
+    const roadmaps = await Roadmap.find({ user: req.user._id });
+    res.json(roadmaps);
+  } catch (error) {
+    console.error('Error fetching user roadmaps:', error);
+    res.status(500).json({ error: 'Failed to load saved roadmaps.' });
+  }
+};
+
+// @desc    Delete a roadmap
+// @route   DELETE /api/roadmap/:id
+// @access  Private
+const deleteRoadmap = async (req, res) => {
+  try {
+    const roadmap = await Roadmap.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!roadmap) {
+      return res.status(404).json({ error: 'Roadmap not found or unauthorized' });
+    }
+
+    res.json({ message: 'Roadmap deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting roadmap:', error);
+    res.status(500).json({ error: 'Failed to delete roadmap' });
+  }
+};
+
 module.exports = {
   generateRoadmap,
   saveRoadmap,
+  getUserRoadmaps,
+  deleteRoadmap,
 };
