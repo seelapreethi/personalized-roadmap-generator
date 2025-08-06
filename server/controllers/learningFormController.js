@@ -10,10 +10,10 @@ const submitLearningForm = async (req, res) => {
   try {
     const newForm = new LearningForm({
       user: req.user.id,
-      topics,
-      skillLevel,
-      weeklyTime,
-      goal,
+      topicsOfInterest: topics,
+      currentSkillLevel: skillLevel,
+      availableTimePerWeek: weeklyTime,
+      learningGoal: goal,
     });
 
     await newForm.save();

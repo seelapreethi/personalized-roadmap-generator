@@ -1,25 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const protect = require('../middleware/authMiddleware');
+const protect = require('../middleware/authMiddleware'); // ✅ Make sure path is correct
 
-// @route   GET /api/protected/
-// @desc    Returns a basic protected message
+// @route   GET /api/protected
+// @desc    A protected test route
 // @access  Private
 router.get('/', protect, (req, res) => {
-  res.json({
-    message: 'You have access to this protected route!',
-    user: req.user,
-  });
+  res.json({ message: `Welcome, ${req.user.name}` });
+});
+router.get('/dashboard', protect, (req, res) => {
+  res.json({ message: `Welcome, ${req.user.name}`, user: req.user });
 });
 
-// @route   GET /api/protected/dashboard
-// @desc    Returns dashboard message with user info
-// @access  Private
-router.get('/dashboard', protect, (req, res) => {
-  res.json({
-    message: `Welcome, ${req.user.name || 'User'}!`,
-    user: req.user,
-  });
-});
 
 module.exports = router;

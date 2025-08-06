@@ -31,6 +31,12 @@ const Navbar = () => {
           <>
             <Link to="/dashboard" style={styles.link}>Dashboard</Link>
             <Link to="/learning-form" style={styles.link}>Learning Form</Link>
+            <Link to="/view-roadmap" style={styles.link}>View Roadmap</Link>
+            
+  <Link to="/roadmap" style={styles.link}>Roadmap</Link>
+<Link to="/my-roadmaps" className="hover:text-blue-400">My Roadmaps</Link>
+
+
             <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
           </>
         )}

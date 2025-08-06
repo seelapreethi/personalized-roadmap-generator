@@ -4,34 +4,26 @@ const router = express.Router();
 const Form = require('../models/Form');
 const protect = require('../middleware/authMiddleware');
 
-// POST - Submit Form
-router.post('/submit', protect, async (req, res) => {
-  const { skillLevel, learningGoal, preferredTech, duration } = req.body;
-
+// @route   POST /api/learning-form
+// @desc    Submit a personalized learning form
+// @access  Private
+router.post('/', protect, async (req, res) => {
   try {
-    const form = new Form({
+    const { topics, skillLevel, weeklyTime, goal } = req.body;
+
+    const newForm = new Form({
       user: req.user._id,
       skillLevel,
-      learningGoal,
-      preferredTech,
-      duration,
+      learningGoal: goal,
+      preferredTech: topics.join(', '),
+      duration: weeklyTime
     });
 
-    const savedForm = await form.save();
+    const savedForm = await newForm.save();
     res.status(201).json(savedForm);
-  } catch (err) {
-    console.error('Form submission error:', err);
-    res.status(500).json({ error: 'Failed to submit form' });
-  }
-});
-
-// GET - Get all forms by user
-router.get('/myforms', protect, async (req, res) => {
-  try {
-    const forms = await Form.find({ user: req.user._id });
-    res.json(forms);
-  } catch (err) {
-    res.status(500).json({ error: 'Error fetching forms' });
+  } catch (error) {
+    console.error('Form submission failed:', error);
+    res.status(400).json({ message: 'Form submission failed', error });
   }
 });
 

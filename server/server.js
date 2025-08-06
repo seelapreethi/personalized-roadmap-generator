@@ -15,7 +15,9 @@ app.use('/api/protected', require('./routes/protected'));
 const learningFormRoutes = require('./routes/learningFormRoutes');
 app.use('/api/learning-form', learningFormRoutes);
 const formRoutes = require('./routes/formRoutes');
-app.use('/api/forms', formRoutes);
+app.use('/api/learning-form', require('./routes/formRoutes'));
+app.use('/api/roadmap', require('./routes/roadmapRoutes'));
+
 
 
 const PORT = process.env.PORT || 5000;

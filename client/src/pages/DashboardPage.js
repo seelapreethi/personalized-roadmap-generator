@@ -41,6 +41,8 @@ const DashboardPage = () => {
       <Navbar />
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gray-50">
         <div className="max-w-xl w-full bg-white rounded-2xl shadow-lg p-6 md:p-10 text-center">
+                  <h1 className="text-3xl font-bold text-blue-600 mb-6">Hi</h1> {/* ✅ Your Hi heading */}
+
           <h2 className={`text-2xl font-semibold mb-4 ${error ? 'text-red-600' : 'text-green-600'}`}>
             {message}
           </h2>
