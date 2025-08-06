@@ -2,13 +2,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 const RoadmapPage = () => {
   const [roadmap, setRoadmap] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const roadmapRef = useRef(null); // reference to roadmap content
+  const roadmapRef = useRef(null);
 
   useEffect(() => {
     const fetchRoadmap = async () => {
@@ -47,165 +46,120 @@ const RoadmapPage = () => {
   }, []);
 
   const handleDownloadPDF = async () => {
-  const input = roadmapRef.current;
-  if (!input || roadmap.length === 0) return;
+    const input = roadmapRef.current;
+    if (!input || roadmap.length === 0) return;
 
-  const pdf = new jsPDF();
-  const pageHeight = pdf.internal.pageSize.height;
-  const marginTop = 20;
-  let y = marginTop;
+    const pdf = new jsPDF();
+    const pageHeight = pdf.internal.pageSize.height;
+    const marginTop = 20;
+    let y = marginTop;
 
-  // Title
-  pdf.setFontSize(20);
-  pdf.setTextColor(40, 40, 40);
-  pdf.text('Personalized Learning Roadmap', 105, y, { align: 'center' });
-  y += 10;
+    pdf.setFontSize(20);
+    pdf.text('Personalized Learning Roadmap', 105, y, { align: 'center' });
+    y += 10;
 
-  // Date of download
-  const today = new Date().toLocaleDateString();
-  pdf.setFontSize(11);
-  pdf.setTextColor(100);
-  pdf.text(`Downloaded on: ${today}`, 105, y, { align: 'center' });
-  y += 10;
-
-  // Line separator
-  pdf.setDrawColor(200);
-  pdf.line(20, y, 190, y);
-  y += 10;
-
-  // Loop through roadmap
-  pdf.setFontSize(13);
-  pdf.setTextColor(50);
-
-  roadmap.forEach((item, index) => {
-    const weekText = `Week ${item.week}: ${item.topic}`;
-    const hoursText = `Estimated Hours: ${item.estimatedHours || 'N/A'}`;
-
-    // Check if enough space on page
-    if (y + 20 > pageHeight - 20) {
-      pdf.addPage();
-      y = marginTop;
-    }
-
-    pdf.text(weekText, 20, y);
-    y += 7;
+    const today = new Date().toLocaleDateString();
     pdf.setFontSize(11);
-    pdf.setTextColor(80);
-    pdf.text(hoursText, 25, y);
+    pdf.text(`Downloaded on: ${today}`, 105, y, { align: 'center' });
+    y += 10;
+
+    pdf.setDrawColor(200);
+    pdf.line(20, y, 190, y);
+    y += 10;
+
     pdf.setFontSize(13);
-    pdf.setTextColor(50);
-    y += 12;
-  });
 
-  // Save
-  pdf.save('Personalized_Learning_Roadmap.pdf');
-};
-const handleSaveRoadmap = async () => {
-  const token = localStorage.getItem('token');
+    roadmap.forEach((item) => {
+      const weekText = `Week ${item.week}: ${item.topic}`;
+      const hoursText = `Estimated Hours: ${item.estimatedHours || 'N/A'}`;
 
-  try {
-    await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/roadmap/save`,
-      { roadmap },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      if (y + 20 > pageHeight - 20) {
+        pdf.addPage();
+        y = marginTop;
       }
-    );
-    alert('✅ Roadmap saved to your account!');
-  } catch (err) {
-    console.error('Error saving roadmap:', err);
-    alert('❌ Failed to save roadmap.');
-  }
-};
 
+      pdf.text(weekText, 20, y);
+      y += 7;
+      pdf.setFontSize(11);
+      pdf.text(hoursText, 25, y);
+      pdf.setFontSize(13);
+      y += 12;
+    });
+
+    pdf.save('Personalized_Learning_Roadmap.pdf');
+  };
+
+  const handleSaveRoadmap = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/roadmap/save`,
+        { roadmap },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('✅ Roadmap saved to your profile!');
+    } catch (err) {
+      console.error('Error saving roadmap:', err);
+      alert('❌ Failed to save roadmap.');
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <div style={styles.container}>
-        <h2>Your Personalized Learning Roadmap</h2>
+      <div className="p-6 text-center font-sans bg-gray-50 min-h-screen">
+        <h2 className="text-3xl font-bold mb-6 text-blue-800">Your Personalized Learning Roadmap</h2>
 
         {loading ? (
-          <p>Loading roadmap...</p>
+          <p className="text-lg text-gray-600">Loading roadmap...</p>
         ) : error ? (
-          <p style={{ color: 'red' }}>{error}</p>
+          <p className="text-red-600 text-lg">{error}</p>
         ) : roadmap.length === 0 ? (
-          <p>No roadmap available.</p>
+          <p className="text-gray-600">No roadmap available.</p>
         ) : (
           <>
             <div ref={roadmapRef}>
-              <ul style={styles.list}>
+              <ul className="space-y-4 max-w-2xl mx-auto">
                 {roadmap.map((item) => (
-                  <li key={item.week} style={styles.listItem}>
-                    <strong>Week {item.week}:</strong> {item.topic}<br />
-                    <em>Estimated Hours:</em> {item.estimatedHours || 'N/A'}
+                  <li
+                    key={item.week}
+                    className="bg-white shadow-md rounded-lg p-4 border border-gray-200 text-left"
+                  >
+                    <strong>Week {item.week}:</strong> {item.topic}
+                    <br />
+                    <span className="text-sm text-gray-600">
+                      Estimated Hours: {item.estimatedHours || 'N/A'}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <button onClick={handleDownloadPDF} style={styles.downloadBtn}>
-              📄 Download as PDF
-            </button>
-            <button onClick={handleSaveRoadmap} style={styles.saveBtn}>
-  💾 Save Roadmap to Profile
-</button>
+            <div className="mt-6 flex justify-center gap-4 flex-wrap">
+              <button
+                onClick={handleDownloadPDF}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded shadow"
+              >
+                📄 Download as PDF
+              </button>
+
+              <button
+                onClick={handleSaveRoadmap}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded shadow"
+              >
+                💾 Save to Profile
+              </button>
+            </div>
           </>
         )}
       </div>
     </>
   );
-};
-
-const styles = {
-  container: {
-    padding: '2rem',
-    textAlign: 'center',
-    fontFamily: 'Arial, sans-serif',
-  },
-  list: {
-    listStyleType: 'none',
-    padding: 0,
-    marginTop: '1rem',
-  },
-  listItem: {
-    padding: '0.7rem',
-    marginBottom: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    backgroundColor: '#f9f9f9',
-  },
-  downloadBtn: {
-  marginTop: '1rem',
-  padding: '12px 24px',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  backgroundColor: '#007bff',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-  transition: 'background-color 0.3s ease',
-},
-saveBtn: {
-  marginTop: '1rem',
-  marginLeft: '1rem',
-  padding: '12px 24px',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  backgroundColor: '#28a745',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-  transition: 'background-color 0.3s ease',
-},
-
-
 };
 
 export default RoadmapPage;
