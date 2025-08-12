@@ -24,6 +24,7 @@ const Navbar = () => {
     { path: "/view-roadmap", label: "View Roadmap" },
     { path: "/roadmap", label: "Roadmap" },
     { path: "/my-roadmaps", label: "My Roadmaps" },
+    { path: "/resources", label: "Resources" }, // New link
   ];
 
   return (
@@ -38,7 +39,7 @@ const Navbar = () => {
       {/* Logo */}
       <motion.h2
         className="text-2xl font-extrabold text-pink-400 soft-neon"
-        whileHover={{ scale: 1.05, textShadow: "0 0 8px #FF00FF" }}
+        whileHover={{ scale: 1.05, textShadow: "0 0 6px #FF00FF" }}
       >
         RouteCrafter
       </motion.h2>
@@ -47,8 +48,8 @@ const Navbar = () => {
       <div className="flex gap-6 items-center">
         {!isLoggedIn ? (
           <>
-            <NavLink to="/login" label="Login" />
-            <NavLink to="/register" label="Register" />
+            <NavLink to="/login" label="Login" active={location.pathname === "/login"} />
+            <NavLink to="/register" label="Register" active={location.pathname === "/register"} />
           </>
         ) : (
           <>
@@ -64,7 +65,7 @@ const Navbar = () => {
               onClick={handleLogout}
               className="px-4 py-2 bg-red-500 rounded-lg text-white font-bold 
                          hover:bg-red-600 transition-all duration-200"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 8px #FF4D4F" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 6px #FF4D4F" }}
             >
               Logout
             </motion.button>
@@ -76,8 +77,8 @@ const Navbar = () => {
       <style>{`
         .soft-neon {
           text-shadow:
-            0 0 3px #FF00FF,
-            0 0 6px #FF00FF;
+            0 0 2px #FF00FF,
+            0 0 4px #FF00FF;
         }
       `}</style>
     </motion.nav>
