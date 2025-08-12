@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cors = require('cors');
+const resourcesRoutes = require("./routes/resources");
 
 const app = express();
 dotenv.config();
@@ -17,6 +18,7 @@ app.use('/api/learning-form', learningFormRoutes);
 const formRoutes = require('./routes/formRoutes');
 app.use('/api/learning-form', require('./routes/formRoutes'));
 app.use('/api/roadmap', require('./routes/roadmapRoutes'));
+app.use("/api/resources", resourcesRoutes);
 
 
 
