@@ -8,7 +8,7 @@ import FormPage from './pages/FormPage';
 import ViewRoadmapPage from './pages/ViewRoadmapPage';
 import RoadmapPage from './pages/RoadmapPage';
 import MyRoadmapsPage from './pages/MyRoadmapsPage';
-import ResourcesPage from './pages/ResourcesPage';
+import FreeResourcesPage from "./pages/FreeResourcesPage";
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
 <Route path="/roadmap" element={<RoadmapPage />} />
 <Route path="/my-roadmaps" element={<MyRoadmapsPage />} />
 
-  <Route path="/resources" element={<ResourcesPage />} />
+  <Route path="/resources" element={<FreeResourcesPage />} />
 
         {/* Add more routes here like Register, Dashboard later */}
       </Routes>
