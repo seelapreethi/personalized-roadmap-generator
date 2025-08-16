@@ -1,3 +1,4 @@
+// frontend/src/pages/RoadmapPage.js
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -30,11 +31,7 @@ const RoadmapPage = () => {
             weeklyTime: "5",
             topics: "HTML,CSS,JavaScript",
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setRoadmap(res.data.roadmap);
 
@@ -116,11 +113,7 @@ const RoadmapPage = () => {
       await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/roadmap/save`,
         { roadmap, progress },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("✅ Roadmap saved to your profile!");
     } catch (err) {
@@ -132,118 +125,122 @@ const RoadmapPage = () => {
   return (
     <>
       <Navbar />
-      <div className="p-6 text-center font-sans bg-gradient-to-tr from-gray-900 via-purple-900 to-black min-h-screen text-white">
-        <h2 className="text-4xl font-bold mb-10 text-teal-300 drop-shadow-lg">
-          🚀 Your Personalized Learning Roadmap
-        </h2>
+      <div className="p-6 font-sans bg-gradient-to-tr from-gray-900 via-purple-900 to-black min-h-screen text-white">
+        <motion.h2
+          className="text-4xl font-bold mb-10 text-center text-cyan-400 drop-shadow-[0_0_20px_#00ffff]"
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 120 }}
+        >
+          Learning Roadmap
+        </motion.h2>
 
         {loading ? (
-          <p className="text-lg text-gray-300">Loading roadmap...</p>
+          <p className="text-lg text-gray-300 text-center">Loading roadmap...</p>
         ) : error ? (
-          <p className="text-red-400 text-lg">{error}</p>
+          <p className="text-red-400 text-lg text-center">{error}</p>
         ) : roadmap.length === 0 ? (
-          <p className="text-gray-400">No roadmap available.</p>
+          <p className="text-gray-400 text-center">No roadmap available.</p>
         ) : (
-          <>
-            <div
-              ref={roadmapRef}
-              className="relative max-w-3xl mx-auto pl-8 border-l-4 border-teal-300"
-            >
-              {roadmap.map((item, index) => {
-                const weekProgress = progress[item.week] || 0;
-                const isCompleted = weekProgress === 100;
+          <div
+            ref={roadmapRef}
+            className="relative flex flex-col items-center gap-16"
+          >
+            {roadmap.map((item, index) => {
+              const weekProgress = progress[item.week] || 0;
+              const isCompleted = weekProgress === 100;
 
-                return (
+              return (
+                <motion.div
+                  key={item.week}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    delay: index * 0.15,
+                    type: "spring",
+                    stiffness: 120,
+                  }}
+                  className="relative flex flex-col items-center"
+                >
+                  {/* Animated Neon Connector */}
+                  {index !== 0 && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 80 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="absolute -top-20 w-1 bg-gradient-to-b from-pink-500 via-cyan-400 to-lime-400 shadow-[0_0_15px_#00ffff] animate-pulse"
+                    ></motion.div>
+                  )}
+
+                  {/* Roadmap Node */}
                   <motion.div
-                    key={item.week}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: index * 0.15,
-                      type: "spring",
-                      stiffness: 70,
-                    }}
-                    className={`relative mb-10 pl-6 ${
-                      isCompleted
-                        ? "border-l-4 border-lime-400 animate-pulse"
-                        : ""
-                    }`}
-                  >
-                    {/* Timeline Dot */}
-                    <span
-                      className={`absolute -left-4 top-2 w-6 h-6 rounded-full border-4 ${
+                    whileHover={{ scale: 1.08 }}
+                    className={`w-72 p-6 text-center rounded-2xl shadow-lg border-2
+                      ${
                         isCompleted
-                          ? "border-lime-400 bg-lime-300"
-                          : "border-teal-400 bg-teal-300"
-                      } shadow-lg`}
-                    ></span>
-
-                    {/* Card */}
-                    <div
-                      className={`p-4 rounded-lg shadow-lg border-2 ${
-                        isCompleted
-                          ? "bg-gray-800 border-lime-400"
-                          : "bg-gray-800 border-teal-400"
+                          ? "bg-gray-900 border-lime-400 shadow-[0_0_20px_#39FF14]"
+                          : "bg-gray-800 border-cyan-400 shadow-[0_0_15px_#00ffff]"
                       }`}
-                    >
-                      <strong className="text-xl text-pink-400">
-                        Week {item.week}:
-                      </strong>{" "}
-                      <span className="text-teal-300">{item.topic}</span>
-                      <br />
-                      <span className="text-sm text-gray-300">
-                        Estimated Hours: {item.estimatedHours || "N/A"}
-                      </span>
+                  >
+                    <h3 className="text-xl font-bold text-pink-400 mb-2 drop-shadow-[0_0_10px_#ff00ff]">
+                      Week {item.week}
+                    </h3>
+                    <p className="text-cyan-300 font-semibold">{item.topic}</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Estimated Hours: {item.estimatedHours || "N/A"}
+                    </p>
 
-                      <div className="mt-2">
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          step="10"
-                          value={weekProgress}
-                          onChange={(e) =>
-                            handleProgressChange(
-                              item.week,
-                              Number(e.target.value)
-                            )
-                          }
-                          className="w-full accent-pink-400"
-                        />
-                        <span
-                          className={`text-sm font-semibold ${
-                            isCompleted
-                              ? "text-lime-400"
-                              : "text-gray-300"
-                          }`}
-                        >
-                          {weekProgress}%
-                        </span>
-                      </div>
+                    {/* Progress bar */}
+                    <div className="mt-3">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="10"
+                        value={weekProgress}
+                        onChange={(e) =>
+                          handleProgressChange(item.week, Number(e.target.value))
+                        }
+                        className="w-full accent-pink-500 cursor-pointer"
+                      />
+                      <span
+                        className={`text-sm font-semibold ${
+                          isCompleted
+                            ? "text-lime-400 drop-shadow-[0_0_10px_#39FF14]"
+                            : "text-cyan-300"
+                        }`}
+                      >
+                        {weekProgress}%
+                      </span>
                     </div>
                   </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Buttons */}
-            <div className="mt-6 flex justify-center gap-4 flex-wrap">
-              <button
-                onClick={handleDownloadPDF}
-                className="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-5 py-2 rounded shadow-lg"
-              >
-                📄 Download as PDF
-              </button>
-
-              <button
-                onClick={handleSaveRoadmap}
-                className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded shadow-lg"
-              >
-                💾 Save to Profile
-              </button>
-            </div>
-          </>
+                </motion.div>
+              );
+            })}
+          </div>
         )}
+
+        {/* Buttons */}
+        <motion.div
+          className="mt-12 flex justify-center gap-6 flex-wrap"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <button
+            onClick={handleDownloadPDF}
+            className="bg-pink-500 hover:bg-pink-600 text-white font-semibold px-6 py-2 rounded-lg shadow-[0_0_15px_#ff00ff] transition"
+          >
+            📄 Download as PDF
+          </button>
+
+          <button
+            onClick={handleSaveRoadmap}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold px-6 py-2 rounded-lg shadow-[0_0_15px_#00ffff] transition"
+          >
+            💾 Save to Profile
+          </button>
+        </motion.div>
       </div>
     </>
   );
